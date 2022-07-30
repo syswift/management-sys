@@ -61,8 +61,8 @@ const Navbar =({currentUser})=>{
                         Dashboard
                     </MenuIcon>
                     <Menu {...bindMenu(popupState)}>
-                        <MenuItem onClick={() => { openTrans(); popupState.close();}}>库存管理</MenuItem>
-                        <MenuItem onClick={() => { openStorage(); popupState.close();}}>周转单管理</MenuItem>
+                        <MenuItem onClick={() => { openTrans(); popupState.close();}} >库存管理</MenuItem>
+                        <MenuItem onClick={() => { openStorage(); popupState.close();}} >周转单管理</MenuItem>
                     </Menu>
                     </React.Fragment>
                 )}

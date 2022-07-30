@@ -106,7 +106,7 @@ const signup = () => {
     
     return (
         <form id="signupForm" autoComplete="off" onSubmit={onSubmit}>
-            <h1 >Sign Up</h1>
+            <h1 className='head1'>Sign Up</h1>
             <div className="comp">
             <TextField 
                 helperText = { values.email_err_text.length > 0 && (

@@ -2,7 +2,7 @@ import buildClient from '../api/build-client';
 
 const mainPage = ({currentUser}) => {
 
-    return <h1>{currentUser !== null ? 'Already logined' : 'Not login'}</h1>;
+    return <h1 className='head1'>{currentUser !== null ? 'Already logined' : 'Not login'}</h1>;
 };
 
 mainPage.getInitialProps = async (context) => {
