@@ -10,9 +10,12 @@ import Image from 'next/image';
 import Menu from '@mui/material/Menu';
 import * as React from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import MenuItem from '@mui/material/MenuItem';
 
 
 const Navbar =({currentUser})=>{
+    /*
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -22,6 +25,7 @@ const Navbar =({currentUser})=>{
     const handleClose = () => {
       setAnchorEl(null);
     };
+    */
   
 
     const signoutFunc = async () => {
@@ -40,30 +44,31 @@ const Navbar =({currentUser})=>{
         }
     }
 
+    const openTrans = () => {
+        Router.push('/trans');
+    }
+
+    const openStorage = () => {
+        Router.push('/trans');
+    }
+
         return (
         <AppBar position="static" style={{backgroundColor:"#001540"}}>
         <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu">   
-            <MenuIcon
-                    id="menuButton"
-                    aria-controls={open ? 'basic-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}/>
-            <Menu 
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                <div className="menu">
-                    <ListItemButton onClick={handleClose}>库存管理</ListItemButton>
-                </div>
-            </Menu>
-            </IconButton>
+            <PopupState variant="popover" popupId="demo-popup-menu">
+                {(popupState) => (
+                    <React.Fragment>
+                    <MenuIcon variant="contained" {...bindTrigger(popupState)}>
+                        Dashboard
+                    </MenuIcon>
+                    <Menu {...bindMenu(popupState)}>
+                        <MenuItem onClick={() => { openTrans(); popupState.close();}}>库存管理</MenuItem>
+                        <MenuItem onClick={() => { openTrans(); popupState.close();}}>周转单管理</MenuItem>
+                    </Menu>
+                    </React.Fragment>
+                )}
+            </PopupState>
+
             <Image 
             src="/logo.png"
             alt="logo" 
