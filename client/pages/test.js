@@ -222,7 +222,7 @@ function operationState(flag){
               
               <center>
                 <br></br>
-                <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}>
+                {/* <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}> */}
                   <span>
                     <Button variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
                       + 新增周转单
@@ -336,7 +336,7 @@ function operationState(flag){
                       </DialogActions>
                     </BootstrapDialog>
                   </span>
-                </form>
+                {/* </form> */}
                 &emsp;&emsp;
 
                 <span>
