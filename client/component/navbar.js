@@ -161,7 +161,8 @@ const Navbar =({currentUser})=>{
                             src="/logo.png"
                             alt="logo" 
                             width={40} 
-                            height={40}/>
+                            height={40}
+                            onClick={()=>{Router.push('/')}}/>
                         <div id="pathname" style={{marginLeft:20,flexGrow:1}}>{showpath()}</div>
                         {!currentUser
                         ? <Button color="inherit" onClick={()=>{Router.push('/auth/loginPage')}}>登录</Button>
@@ -219,7 +220,7 @@ const Navbar =({currentUser})=>{
                         </ListItem>
                     </List>
                     <List>
-                    <ListItem button onClick={()=>{Router.push('./1')}}>
+                    <ListItem button onClick={()=>{Router.push('/trans')}}>
                         <ListItemIcon><LoopIcon color="primary"/></ListItemIcon>
                         <ListItemText primary='周转管理' />
                         </ListItem>
