@@ -8,7 +8,7 @@ const global = ({Component, pageProps, currentUser}) =>{
     return (
     <div>     
         <Head>
-            <title>管理系统</title>
+            <title>零非管理系统</title>
             <link rel="shortcut icon" href='/logo.png'/>
         </Head>
         <Navbar currentUser={currentUser}/>
