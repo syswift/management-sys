@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
-    - host: managementsystem.dev
+    - host: www.syswift.me
       http:
         paths:
           - path: /api/auth/?(.*)
