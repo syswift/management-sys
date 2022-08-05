@@ -98,6 +98,10 @@ function operationState(flag){
     return ''
   }
 }
+
+const onSubmit = () => {
+
+}
   
   const rows = [
     createData('RT2021060100001', 'CU_JS00001', 'EU_SD_00002',true,'逆向周转','陈超','2021-06-01 09:29:31',true),
@@ -219,127 +223,132 @@ function operationState(flag){
               </span>
             </div>
             <div>
+              
               <center>
                 <br></br>
-                <span>
-                  <Button variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
-                    + 新增周转单
-                  </Button>
-                  <BootstrapDialog
-                    onClose={handleClose}
-                    aria-labelledby="customized-dialog-title"
-                    open={open}>
-                    <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                      新增周转单
-                    </BootstrapDialogTitle>
-                    <DialogContent dividers>
-                      <Typography gutterBottom>
-                        <span>*周转单号:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                        <span>*客户代码:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                        <span>*终端代码:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                      </Typography>
-                      <Typography gutterBottom>
+                <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}>
+                  <span>
+                    <Button variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
+                      + 新增周转单
+                    </Button>
+                    <BootstrapDialog
+                      onClose={handleClose}
+                      aria-labelledby="customized-dialog-title"
+                      open={open}>
+                      <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                        新增周转单
+                      </BootstrapDialogTitle>
+                      <DialogContent dividers>
+                        <Typography gutterBottom>
+                          <span>*周转单号:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                          <span>*客户代码:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                          <span>*终端代码:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                        </Typography>
+                        <Typography gutterBottom>
+                          <span>
+                            <Input placeho lder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{width: '30%' }}/>  
+                          </span>
+                          &emsp;
+                          <span>
+                            <Select labelId="customerLabel" id="customerSelect" style={{width: '30%' }}>
+                              <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
+                              <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
+                              <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
+                              <MenuItem value="CU_JS00004">CU_JS00004</MenuItem>
+                              <MenuItem value="CU_JS00005">CU_JS00005</MenuItem>
+                              <MenuItem value="CU_JS00006">CU_JS00006</MenuItem>
+                            </Select>
+                          </span>
+                          &emsp;
+                          <span>
+                            <Select labelId="terminalLabel" id="terminalSelect" style={{width: '30%' }} >
+                              <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
+                              <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
+                              <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
+                              <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
+                              <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
+                              <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
+                              <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
+                              <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
+                              <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
+                              <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
+                            </Select>
+                          </span>
+                        </Typography>
+                        <Typography gutterBottom>
+                          周转单类型:
+                        </Typography>
+                        <Typography gutterBottom>
                         <span>
-                          <Input placeho lder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{width: '30%' }}/>  
-                        </span>
-                        &emsp;
-                        <span>
-                          <Select labelId="customerLabel" id="customerSelect" style={{width: '30%' }}>
-                            <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
-                            <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
-                            <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
-                            <MenuItem value="CU_JS00004">CU_JS00004</MenuItem>
-                            <MenuItem value="CU_JS00005">CU_JS00005</MenuItem>
-                            <MenuItem value="CU_JS00006">CU_JS00006</MenuItem>
+                          <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{width: '30%' }}>
+                            <MenuItem value="正向周转">正向周转</MenuItem>
+                            <MenuItem value="逆向周转">逆向周转</MenuItem>
                           </Select>
                         </span>
-                        &emsp;
-                        <span>
-                          <Select labelId="terminalLabel" id="terminalSelect" style={{width: '30%' }} >
-                            <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
-                            <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
-                            <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
-                            <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
-                            <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
-                            <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
-                            <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
-                            <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
-                            <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
-                            <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
-                          </Select>
-                        </span>
-                      </Typography>
-                      <Typography gutterBottom>
-                        周转单类型:
-                      </Typography>
-                      <Typography gutterBottom>
-                      <span>
-                        <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{width: '30%' }}>
-                          <MenuItem value="正向周转">正向周转</MenuItem>
-                          <MenuItem value="逆向周转">逆向周转</MenuItem>
-                        </Select>
-                      </span>
-                      </Typography>
-                      <br></br>
-                      <span></span>
-                      <Typography gutterBottom>
+                        </Typography>
                         <br></br>
-                        <div>
-                          订单明细
-                        </div>
-                        <br></br>
-                        <TableContainer component={Paper}>
-                          <Table sx={{ minWidth: 400 }} aria-label="simple table">
-                            <TableHead>
-                              <TableRow>
-                                <TableCell>周转箱代码</TableCell>
-                                <TableCell>数量</TableCell>
-                                <TableCell>操作</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell>
-                                  <Select labelId="turnoverCodeLabel" id="turnoverCodeSelect" style={{width: '100%' }} >
-                                    <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
-                                    <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
-                                    <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
-                                    <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
-                                    <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
-                                    <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
-                                    <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
-                                    <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
-                                    <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
-                                    <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
-                                  </Select>
-                                </TableCell>
-                                <TableCell>
-                                
-                                </TableCell>
-                                <TableCell>
-                                <IconButton aria-label="delete">
-                                  <DeleteIcon />
-                                </IconButton>
-                                </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Typography>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button autoFocus variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
-                        提交
-                      </Button>
-                    </DialogActions>
-                  </BootstrapDialog>
-                </span>
+                        <span></span>
+                        <Typography gutterBottom>
+                          <br></br>
+                          <div>
+                            订单明细
+                          </div>
+                          <br></br>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 400 }} aria-label="simple table">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>周转箱代码</TableCell>
+                                  <TableCell>数量</TableCell>
+                                  <TableCell>操作</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                <TableRow>
+                                  <TableCell>
+                                    <Select labelId="turnoverCodeLabel" id="turnoverCodeSelect" style={{width: '100%' }} >
+                                      <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
+                                      <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
+                                      <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
+                                      <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
+                                      <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
+                                      <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
+                                      <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
+                                      <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
+                                      <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
+                                      <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
+                                    </Select>
+                                  </TableCell>
+                                  <TableCell>
+                                  
+                                  </TableCell>
+                                  <TableCell>
+                                  <IconButton aria-label="delete">
+                                    <DeleteIcon />
+                                  </IconButton>
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                        </Typography>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button autoFocus variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
+                          提交
+                        </Button>
+                      </DialogActions>
+                    </BootstrapDialog>
+                  </span>
+                
                 &emsp;&emsp;
+
                 <span>
                 <Button variant="outlined" color="primary">
                   查询
                 </Button>
                 </span>
+                </form>
                 <br></br>
                 <br></br>
               </center>
