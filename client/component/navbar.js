@@ -123,7 +123,7 @@ const Navbar =({currentUser})=>{
   
 
     const openManagement = () =>{
-        Router.push('./1');
+        Router.push('./trans');
     };
 
     const signoutFunc = async () => {
