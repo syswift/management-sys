@@ -58,10 +58,6 @@ const TransSchema = new mongoose.Schema({
 );
 
 TransSchema.pre('save', async function(done){
-    if(this.isModified('password')) {
-        const hashed = await Password.toHash(this.get('password'));
-        this.set('password', hashed);
-    }
     done();
 });
 
