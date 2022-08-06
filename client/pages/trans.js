@@ -110,7 +110,11 @@ const onSubmit = async (event) => {
         const turnoverCodeSelect = values.turnoverTypeSelect;
         const processPer = await axios.get('/api/auth/currentuser');
 
-        alert(customerSelect+' '+terminalSelect+' '+turnoverTypeSelect+' '+turnoverCodeSelect+' '+processPer);
+        console.log(customerSelect);
+        console.log(terminalSelect);
+        console.log(turnoverTypeSelect);
+        console.log(turnoverCodeSelect);
+        console.log(processPer);
 
         //setValues({...values});
         /*
@@ -359,13 +363,13 @@ const onSubmit = async (event) => {
                         </Typography>
                       </DialogContent>
                       <DialogActions>
-                        <Button autoFocus variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
+                        <Button autoFocus variant="contained" type="submit" size="medium" color="primary" className={classes.margin}>
                           提交
                         </Button>
                       </DialogActions>
                     </BootstrapDialog>
                   </span>
-                
+                </form>
                 &emsp;&emsp;
 
                 <span>
@@ -373,7 +377,7 @@ const onSubmit = async (event) => {
                   查询
                 </Button>
                 </span>
-                </form>
+                
                 <br></br>
                 <br></br>
               </center>
