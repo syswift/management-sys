@@ -99,7 +99,29 @@ function operationState(flag){
   }
 }
 
-const onSubmit = () => {
+const onSubmit = (event) => {
+  /*
+        event.preventDefault();
+        
+        const customerSelect = values.customerSelect;
+        const terminalSelect = values.terminalSelect;
+        const turnoverTypeSelect = values.turnoverTypeSelect;
+        const turnoverCodeSelect = values.turnoverTypeSelect;
+
+        setValues({...values});
+
+        try{
+            const response = await axios.post('/api/auth/signup', {
+                email, password, con_password
+            })
+            console.log(response);
+            //success upload
+        } 
+        catch (err) {
+            values.errors = err.response.data.errors;
+            console.log(values.errors);
+        }
+        */
   
 }
   
