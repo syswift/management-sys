@@ -31,6 +31,7 @@ import Typography from '@mui/material/Typography';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import drawerWidth from '../globalData'
+import axios from 'axios';
 
 import Pagination from '@mui/material/Pagination';
 
@@ -99,17 +100,20 @@ function operationState(flag){
   }
 }
 
-const onSubmit = (event) => {
-  /*
+const onSubmit = async (event) => {
+  
         event.preventDefault();
         
         const customerSelect = values.customerSelect;
         const terminalSelect = values.terminalSelect;
         const turnoverTypeSelect = values.turnoverTypeSelect;
         const turnoverCodeSelect = values.turnoverTypeSelect;
+        const processPer = await axios.get('/api/auth/currentuser');
 
-        setValues({...values});
+        alert(customerSelect+' '+terminalSelect+' '+turnoverTypeSelect+' '+turnoverCodeSelect+' '+processPer);
 
+        //setValues({...values});
+        /*
         try{
             const response = await axios.post('/api/auth/signup', {
                 email, password, con_password
@@ -121,8 +125,7 @@ const onSubmit = (event) => {
             values.errors = err.response.data.errors;
             console.log(values.errors);
         }
-        */
-  
+        */ 
 }
   
   const rows = [
