@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl
+  name: management-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: management
   template:
     metadata:
       labels:
-        app: auth
+        app: management
     spec:
       containers:
-        - name: auth
-          image: syswift/auth
+        - name: management
+          image: syswift/management
           env:
             - name: MONGO_URI
-              value: 'mongodb://auth-mongo-srv:27017/auth'
+              value: 'mongodb://management-mongo-srv:27017/management'
             - name: JWT_KEY
               valueFrom:
                   secretKeyRef:
@@ -27,12 +27,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata: 
-  name: auth-srv
+  name: management-srv
 spec:
   selector:
-    app: auth
+    app: management
   ports:
-    - name: auth
+    - name: management
       protocol: TCP
       port: 5000
       targetPort: 5000
