@@ -28,12 +28,16 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@mui/material/Typography';
+import * as ReactDOM from 'react-dom';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import drawerWidth from '../globalData'
 import axios from 'axios';
 
 import Pagination from '@mui/material/Pagination';
+import { format } from "date-fns";
+
+
 
 // 弹窗
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -79,18 +83,24 @@ function createData(turnoverNumber, customerCode, terminalCode, turnoverState, t
   }
 function turnState(flag){
   if(flag){
-    return <Button variant="outlined" color="primary">新增</Button>
+    return <Button variant="outlined" color="primary">进行中</Button>
   }else{
     return <Button variant="outlined">完成</Button>
   }
 }
+
+const ondelete = async () =>{
+  console.log('here');
+  const res = await axios.get('/api/management/transdelete/'+'RT2022080700001');
+  alert(JSON.stringify(res.data));
+}
+
 // 周转类型的判断
 function operationState(flag){
   if(flag){
     return (
       <div>
-        <Button variant="outlined" color="secondary">取消</Button>&emsp;
-        <Button variant="outlined" color="primary">新增</Button>&emsp;
+        <Button variant="outlined" color="secondary" onClick={ondelete}>取消</Button>&emsp;
         <Button variant="outlined">完成周转</Button>
       </div>
       )
@@ -98,16 +108,7 @@ function operationState(flag){
     return ''
   }
 }
-  
-  const rows = [
-    createData('RT2021060100001', 'CU_JS00001', 'EU_SD_00002',true,'逆向周转','陈超','2021-06-01 09:29:31',true),
-    createData('RT2021051700001', 'CU_JS00001', 'EU_SD_00002',true,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900004', 'CU_JS00001', 'EU_JL_00001',true,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900003', 'CU_JS00001', 'EU_SC_00002',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900002', 'CU_JS00001', 'EU_SD_00002',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900001', 'CU_JS00001', 'EU_SD_00002',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052800004', 'CU_JS00001', 'EU_JL_00001',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-  ];
+
 
   const useStyles = makeStyles((theme) => ({
     margin: {
@@ -118,14 +119,16 @@ function operationState(flag){
     },
   }));
 
-  export default function BasicTable() {
+
+  const trans = () => {
     // 选项卡
     const [value, setValue] = React.useState({
       transId:'',
       customerSelect: '',
       terminalSelect: '',
       turnoverTypeSelect: '',
-      turnoverCodeSelect: ''
+      turnoverCodeSelect: '',
+      alltrans: []
     });
 
     // 按钮组件
@@ -149,6 +152,16 @@ function operationState(flag){
     const handleChange = (prop) => (event) => {
       setValue({ ...value, [prop]: event.target.value });
     };
+
+    const getDate = () =>{
+      const today = new Date();
+
+      //const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() +' '+ today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      let date = '';
+      date = format(today, "MMMM do, yyyy H:mma");
+
+      return date;
+    }
   
   const onSubmit = async (event) => {
   
@@ -158,28 +171,119 @@ function operationState(flag){
           const customerSelect = value.customerSelect;
           const terminalSelect = value.terminalSelect;
           const turnoverTypeSelect = value.turnoverTypeSelect;
-          const turnoverCodeSelect = value.turnoverCodeSelect;
           const processObj = await axios.get('/api/auth/currentuser');
-  
-          //console.log(transId+' '+customerSelect+' '+terminalSelect+' '+turnoverTypeSelect+' '+turnoverCodeSelect+' '+processObj.data.currentUser.email);
-  
-          try{
-              const processPer = processObj.data.currentUser.email;
 
-              const response = await axios.post('/api/management/transupload', {
-                transId: transId,
-                customerId: customerSelect,
-                termId: terminalSelect,
-                transType: turnoverTypeSelect,
-                processPer: processPer
-              })
-              alert(JSON.stringify(response));
-              //success upload
-          } 
-          catch (err) {
-              value.errors = err.response.data.errors;
-              alert(JSON.stringify(value.errors));
+          if(processObj.data.currentUser === null)
+          {
+            alert('请登录账号');
+
+            setValue({...value,
+              transId:'',
+              customerSelect:'',
+              terminalSelect:'',
+              turnoverTypeSelect:'',
+              processPer:''
+          });
           }
+          else if(transId === '' ||
+            customerSelect === '' ||
+            terminalSelect === '' ||
+            turnoverTypeSelect === '')
+          {
+            alert('请填写所有周转单信息');
+
+            setValue({...value,
+              transId:'',
+              customerSelect:'',
+              terminalSelect:'',
+              turnoverTypeSelect:'',
+              processPer:''
+          });
+          }
+          else{
+  
+            try{
+                const processPer = processObj.data.currentUser.email;
+                const currentDate = getDate();
+
+                //alert(currentDate);
+
+                await axios.post('/api/management/transupload', {
+                  transId: transId,
+                  customerId: customerSelect,
+                  termId: terminalSelect,
+                  transState: true,
+                  transType: turnoverTypeSelect,
+                  processPer: processPer,
+                  createTime: currentDate
+                })
+
+                setValue({...value,
+                  transId:'',
+                  customerSelect:'',
+                  terminalSelect:'',
+                  turnoverTypeSelect:'',
+                  processPer:''
+              });
+      
+                search();
+                setOpen(false);
+                //success upload
+            } 
+            catch (err) {
+                value.errors = err.response.data.errors;
+                alert(JSON.stringify(value.errors));
+            }
+          }
+  }
+  
+
+  const search = async () => {
+    const processPer = await axios.get('/api/auth/currentuser');
+    if(processPer.data.currentUser === null)
+    {
+            alert('请登录账号');
+
+            setValue({...value,
+              transId:'',
+              customerSelect:'',
+              terminalSelect:'',
+              turnoverTypeSelect:'',
+              processPer:''
+          })
+    }
+    else{
+
+      const all = await axios.get('/api/management/transdownload/'+processPer.data.currentUser.email);
+
+      console.log(processPer.data.currentUser.email);
+      value.alltrans = [];
+
+      for(const tran of all.data.allTrans)
+      {
+        value.alltrans.push(createData(tran.transId,tran.customerId,tran.termId,tran.transState,tran.transType,tran.processPer,tran.createTime,true));
+      }
+
+      const element = document.getElementById('all_trans');
+
+      ReactDOM.render(value.alltrans.map((row) => (
+        <TableRow
+          key={row.name}
+          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          <TableCell component="th" scope="row">
+            {row.turnoverNumber}
+          </TableCell>
+          <TableCell align="center">{row.customerCode}</TableCell>
+          <TableCell align="center">{row.terminalCode}</TableCell>
+          <TableCell align="center">{turnState(row.turnoverState)}</TableCell>
+          <TableCell align="center">{row.turnoverType}</TableCell>
+          <TableCell align="center">{row.founders}</TableCell>
+          <TableCell align="center">{row.createTime}</TableCell>
+          <TableCell align="center">{operationState(row.operation)}</TableCell>
+        </TableRow>
+      )), element);
+    }
+    
   }
 
     return (
@@ -384,7 +488,7 @@ function operationState(flag){
                 &emsp;&emsp;
 
                 <span>
-                <Button variant="outlined" color="primary">
+                <Button variant="outlined" onClick={search} color="primary">
                   查询
                 </Button>
                 </span>
@@ -411,27 +515,13 @@ function operationState(flag){
                 <TableCell align="center">操作</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row">
-                    {row.turnoverNumber}
-                  </TableCell>
-                  <TableCell align="center">{row.customerCode}</TableCell>
-                  <TableCell align="center">{row.terminalCode}</TableCell>
-                  <TableCell align="center">{turnState(row.turnoverState)}</TableCell>
-                  <TableCell align="center">{row.turnoverType}</TableCell>
-                  <TableCell align="center">{row.founders}</TableCell>
-                  <TableCell align="center">{row.createTime}</TableCell>
-                  <TableCell align="center">{operationState(row.operation)}</TableCell>
-                </TableRow>
-              ))}
+            <TableBody id='all_trans'>
             </TableBody>
             <Pagination count={10}  showFirstButton showLastButton onChange={pageNumberOnChange} />
           </Table>
         </TableContainer>
       </div>
     );
-  }
+}
+
+  export default trans;

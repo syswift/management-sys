@@ -6,9 +6,9 @@ const router = express.Router();
 router.post('/api/management/transupload',[], 
 async (req: Request, res: Response) =>{
 
-    const { transId, customerId, termId, transType, processPer} = req.body;
+    const { transId, customerId, termId,transState, transType, processPer,createTime} = req.body;
 
-    const trans = Trans.build({transId, customerId, termId, transType, processPer});
+    const trans = Trans.build({transId, customerId, termId, transState, transType, processPer, createTime});
     await trans.save();
 
     res.status(201).send(trans);

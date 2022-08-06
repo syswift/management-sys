@@ -4,8 +4,10 @@ interface TransAttrs {
     transId: string;
     customerId: string;
     termId: string;
+    transState: boolean;
     transType: string;
     processPer: string;
+    createTime: string;
 }
 
 //extends method for mongoose to work with typescript
@@ -19,8 +21,10 @@ interface TransDoc extends mongoose.Document {
     transId: string;
     customerId: string;
     termId: string;
+    transState: boolean;
     transType: string;
     processPer: string;
+    createTime: string;
 }
 
 const transSchema = new mongoose.Schema({
@@ -36,11 +40,19 @@ const transSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    transState: {
+        type: Boolean,
+        required: true
+    },
     transType: {
         type: String,
         required: true
     },
     processPer: {
+        type: String,
+        required: true
+    },
+    createTime: {
         type: String,
         required: true
     },
