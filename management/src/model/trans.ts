@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { Password } from '../service/password';
 
 interface TransAttrs {
     transId: string;
