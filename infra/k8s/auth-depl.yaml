@@ -17,7 +17,7 @@ spec:
           image: syswift/auth
           env:
             - name: MONGO_URI
-              value: 'mongodb://auth-mongo-srv:27017/auth'
+              value: 'mongodb+srv://syswift:986900@syswift1.ug2e7.azure.mongodb.net/?retryWrites=true&w=majority'
             - name: JWT_KEY
               valueFrom:
                   secretKeyRef:
