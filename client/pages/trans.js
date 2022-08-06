@@ -35,7 +35,6 @@ import axios from 'axios';
 
 import Pagination from '@mui/material/Pagination';
 
-
 // 弹窗
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -99,38 +98,6 @@ function operationState(flag){
     return ''
   }
 }
-
-const onSubmit = async (event) => {
-  
-        event.preventDefault();
-        
-        const customerSelect = values.customerSelect;
-        const terminalSelect = values.terminalSelect;
-        const turnoverTypeSelect = values.turnoverTypeSelect;
-        const turnoverCodeSelect = values.turnoverTypeSelect;
-        const processPer = await axios.get('/api/auth/currentuser');
-
-        console.log(customerSelect);
-        console.log(terminalSelect);
-        console.log(turnoverTypeSelect);
-        console.log(turnoverCodeSelect);
-        console.log(processPer);
-
-        //setValues({...values});
-        /*
-        try{
-            const response = await axios.post('/api/auth/signup', {
-                email, password, con_password
-            })
-            console.log(response);
-            //success upload
-        } 
-        catch (err) {
-            values.errors = err.response.data.errors;
-            console.log(values.errors);
-        }
-        */ 
-}
   
   const rows = [
     createData('RT2021060100001', 'CU_JS00001', 'EU_SD_00002',true,'逆向周转','陈超','2021-06-01 09:29:31',true),
@@ -153,10 +120,14 @@ const onSubmit = async (event) => {
 
   export default function BasicTable() {
     // 选项卡
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
+    const [value, setValue] = React.useState({
+      transId:'',
+      customerSelect: '',
+      terminalSelect: '',
+      turnoverTypeSelect: '',
+      turnoverCodeSelect: ''
+    });
+
     // 按钮组件
     const classes = useStyles();
     // 弹窗
@@ -174,6 +145,42 @@ const onSubmit = async (event) => {
       console.log(value)
       setPage(value)
     }
+
+    const handleChange = (prop) => (event) => {
+      setValue({ ...value, [prop]: event.target.value });
+    };
+  
+  const onSubmit = async (event) => {
+  
+          event.preventDefault();
+  
+          const transId = value.transId;
+          const customerSelect = value.customerSelect;
+          const terminalSelect = value.terminalSelect;
+          const turnoverTypeSelect = value.turnoverTypeSelect;
+          const turnoverCodeSelect = value.turnoverCodeSelect;
+          const processObj = await axios.get('/api/auth/currentuser');
+  
+          //console.log(transId+' '+customerSelect+' '+terminalSelect+' '+turnoverTypeSelect+' '+turnoverCodeSelect+' '+processObj.data.currentUser.email);
+  
+          try{
+              const processPer = processObj.data.currentUser.email;
+
+              const response = await axios.post('/api/management/transupload', {
+                transId: transId,
+                customerId: customerSelect,
+                termId: terminalSelect,
+                transType: turnoverTypeSelect,
+                processPer: processPer
+              })
+              alert(JSON.stringify(response));
+              //success upload
+          } 
+          catch (err) {
+              value.errors = err.response.data.errors;
+              alert(JSON.stringify(value.errors));
+          }
+  }
 
     return (
       <div style={{width: `calc(100% - ${drawerWidth}px)`,
@@ -255,7 +262,7 @@ const onSubmit = async (event) => {
               
               <center>
                 <br></br>
-                <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}>
+                
                   <span>
                     <Button variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
                       + 新增周转单
@@ -267,6 +274,7 @@ const onSubmit = async (event) => {
                       <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
                         新增周转单
                       </BootstrapDialogTitle>
+                      <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}>
                       <DialogContent dividers>
                         <Typography gutterBottom>
                           <span>*周转单号:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
@@ -275,11 +283,11 @@ const onSubmit = async (event) => {
                         </Typography>
                         <Typography gutterBottom>
                           <span>
-                            <Input placeho lder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{width: '30%' }}/>  
+                            <Input placeho lder="请输入周转单号" onChange={handleChange('transId')}  inputProps={{ 'aria-label': 'description' }} style={{width: '30%' }}/>  
                           </span>
                           &emsp;
                           <span>
-                            <Select labelId="customerLabel" id="customerSelect" style={{width: '30%' }}>
+                            <Select labelId="customerLabel" id="customerSelect" onChange={handleChange('customerSelect')} style={{width: '30%' }}>
                               <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
                               <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
                               <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
@@ -290,7 +298,7 @@ const onSubmit = async (event) => {
                           </span>
                           &emsp;
                           <span>
-                            <Select labelId="terminalLabel" id="terminalSelect" style={{width: '30%' }} >
+                            <Select labelId="terminalLabel" id="terminalSelect" onChange={handleChange('terminalSelect')} style={{width: '30%' }} >
                               <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
                               <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
                               <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
@@ -309,7 +317,7 @@ const onSubmit = async (event) => {
                         </Typography>
                         <Typography gutterBottom>
                         <span>
-                          <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{width: '30%' }}>
+                          <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" onChange={handleChange('turnoverTypeSelect')} style={{width: '30%' }}>
                             <MenuItem value="正向周转">正向周转</MenuItem>
                             <MenuItem value="逆向周转">逆向周转</MenuItem>
                           </Select>
@@ -335,7 +343,7 @@ const onSubmit = async (event) => {
                               <TableBody>
                                 <TableRow>
                                   <TableCell>
-                                    <Select labelId="turnoverCodeLabel" id="turnoverCodeSelect" style={{width: '100%' }} >
+                                    <Select labelId="turnoverCodeLabel" id="turnoverCodeSelect" onChange={handleChange('turnoverCodeSelect')} style={{width: '100%' }} >
                                       <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
                                       <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
                                       <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
@@ -361,15 +369,18 @@ const onSubmit = async (event) => {
                             </Table>
                           </TableContainer>
                         </Typography>
+
+                        <DialogActions>
+                          <Button autoFocus variant="contained" type="submit" size="medium" color="primary" className={classes.margin}>
+                            提交
+                          </Button>
+                        </DialogActions>
+
                       </DialogContent>
-                      <DialogActions>
-                        <Button autoFocus variant="contained" type="submit" size="medium" color="primary" className={classes.margin}>
-                          提交
-                        </Button>
-                      </DialogActions>
+                      </form>
                     </BootstrapDialog>
                   </span>
-                </form>
+                
                 &emsp;&emsp;
 
                 <span>

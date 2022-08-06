@@ -3,7 +3,7 @@ import { Trans } from '../model/trans';
 
 const router = express.Router();
 
-router.post('/api/auth/transupload',[], 
+router.post('/api/management/transupload',[], 
 async (req: Request, res: Response) =>{
 
     const { transId, customerId, termId, transType, processPer} = req.body;

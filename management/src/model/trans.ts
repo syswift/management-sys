@@ -23,7 +23,7 @@ interface TransDoc extends mongoose.Document {
     processPer: string;
 }
 
-const TransSchema = new mongoose.Schema({
+const transSchema = new mongoose.Schema({
     transId: {
         type: String,
         required: true
@@ -36,7 +36,7 @@ const TransSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    transTypes: {
+    transType: {
         type: String,
         required: true
     },
@@ -56,14 +56,14 @@ const TransSchema = new mongoose.Schema({
 }
 );
 
-TransSchema.pre('save', async function(done){
+transSchema.pre('save', async function(done){
     done();
 });
 
-TransSchema.statics.build = (attrs: TransAttrs) =>{
+transSchema.statics.build = (attrs: TransAttrs) =>{
     return new Trans(attrs);
 };
 
-const Trans = mongoose.model<TransDoc, TransModel>('Trans', TransSchema);
+const Trans = mongoose.model<TransDoc, TransModel>('Trans',transSchema);
 
 export {Trans};
