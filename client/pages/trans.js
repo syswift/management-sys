@@ -88,6 +88,18 @@ const trans = () => {
     }
   }
 
+const finish = async (event) => {
+
+  const processPer = await axios.get('/api/auth/currentuser');
+  const transId = event.currentTarget.id;
+
+  const res = await axios.post('/api/management/transfinish',{
+    processPer: processPer
+  });
+
+  console.log(res);
+}
+
 const ondelete = async () =>{
   console.log('here');
   const res = await axios.get('/api/management/transdelete/'+'RT2022080700001');
@@ -99,14 +111,14 @@ const ondelete = async () =>{
     if (flag) {
       return (
         <div>
-          <Button variant="outlined" color="secondary" id = {'cancel'+transId} >取消</Button>&emsp;
-          <Button variant="outlined" id = {'finish'+transId} >完成周转</Button>
+          <Button variant="outlined" color="secondary" id = {transId+'cancel'} >取消</Button>&emsp;
+          <Button variant="outlined" id = {transId+'finish'} onClick={finish} >完成周转</Button>
         </div>
       )
     } else {
       return ''
     }
-  }
+}
 
 
   const useStyles = makeStyles((theme) => ({
@@ -332,20 +344,15 @@ const ondelete = async () =>{
     <TableRow id={res}>                                                        
     <TableCell>
     <Select labelId="turnoverCodeLabel" id={'turnoverCodeSelect'+res} onChange={handleBoxChange('code',res)} style={{width: '100%' }} >
-      <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
-      <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
-      <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
-      <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
-      <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
-      <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
-      <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
-      <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
-      <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
-      <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
+      <MenuItem value="EU_HB_00001">CN108427574B</MenuItem>
+      <MenuItem value="EU_AH_00001">CN757667896C</MenuItem>
+      <MenuItem value="EU_AH_00002">CN435346678A</MenuItem>
+      <MenuItem value="EU_NMG_00001">CN224567574B</MenuItem>
+      <MenuItem value="EU_BJ_00001">CN967865756C</MenuItem>
       </Select>
     </TableCell>  
     <TableCell>
-      <TextField margin="normal" inputProps={{ inputMode: 'numeric', pattern: '[1-9]*' }} onChange={handleBoxChange('amount',res)} style={{width: '50%' }}/>
+      <TextField margin="normal" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} onChange={handleBoxChange('amount',res)} style={{width: '50%' }}/>
     </TableCell>
     <TableCell>
     <IconButton aria-label="delete">
@@ -525,6 +532,7 @@ const ondelete = async () =>{
                         <br></br>
                         <div>
                           订单明细
+                          &emsp;
                             <Button variant="contained" onClick={newBox}>新增一行</Button>
                         </div>
                           

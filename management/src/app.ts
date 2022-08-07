@@ -6,6 +6,7 @@ import { transuploadRouter } from './routes/transupload';
 import { transdownloadRouter } from './routes/transdownload';
 import { errorHandler, NotFoundError } from '@syswift1/common';
 import { transdeleteRouter } from './routes/transdelete';
+import { transfinishRouter } from './routes/transfinish';
 
 const app = express();
 app.set('trust proxy', true);
@@ -20,6 +21,7 @@ app.use(
 app.use(transuploadRouter);
 app.use(transdownloadRouter);
 app.use(transdeleteRouter);
+app.use(transfinishRouter);
 
 app.all('*', async (req, res) => {  //request not found
     throw new NotFoundError();
