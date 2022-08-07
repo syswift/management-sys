@@ -95,12 +95,12 @@ const ondelete = async () =>{
 }
 
   // 周转类型的判断
-  function operationState(flag) {
+  function operationState(flag , transId) {
     if (flag) {
       return (
         <div>
-          <Button variant="outlined" color="secondary">取消</Button>&emsp;
-          <Button variant="outlined">完成周转</Button>
+          <Button variant="outlined" color="secondary" id = {'cancel'+transId} >取消</Button>&emsp;
+          <Button variant="outlined" id = {'finish'+transId} >完成周转</Button>
         </div>
       )
     } else {
@@ -228,7 +228,7 @@ const ondelete = async () =>{
             <TableCell align="center">{row.turnoverType}</TableCell>
             <TableCell align="center">{row.founders}</TableCell>
             <TableCell align="center">{row.createTime}</TableCell>
-            <TableCell align="center">{operationState(row.operation)}</TableCell>
+            <TableCell align="center">{operationState(row.operation, row.customerCode)}</TableCell>
           </TableRow>
         )), element);
       }
