@@ -1,0 +1,25 @@
+name: deploy-management
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'management/**'
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd management && docker build -t syswift/management .
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker push syswift/management
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGTALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save managementcluster
+      - run: kubectl rollout restart deployment management-depl

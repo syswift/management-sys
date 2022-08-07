@@ -24,3 +24,10 @@ spec:
                 name: client-srv
                 port: 
                   number: 3000
+          - path: /api/management/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: management-srv
+                port: 
+                  number: 5000

@@ -10,13 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "material-ui-popup-state": "latest",
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
     "@mui/material": "latest",
     "axios": "latest",
+    "date-fns": "latest",
+    "material-ui-popup-state": "latest",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"

@@ -37,90 +37,90 @@ import Pagination from '@mui/material/Pagination';
 
 // 弹窗
 
-  export default function gongdan() {
+const gongdan = () => {
     const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-      '& .MuiDialogContent-root': {
-        padding: theme.spacing(2),
-      },
-      '& .MuiDialogActions-root': {
-        padding: theme.spacing(1),
-      },
+        '& .MuiDialogContent-root': {
+            padding: theme.spacing(2),
+        },
+        '& .MuiDialogActions-root': {
+            padding: theme.spacing(1),
+        },
     }));
-    
+
     const BootstrapDialogTitle = (props) => {
-      const { children, onClose, ...other } = props;
-    
-      return (
-        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-          {children}
-          {onClose ? (
-            <IconButton
-              aria-label="close"
-              onClick={onClose}
-              sx={{
-                position: 'absolute',
-                right: 8,
-                top: 8,
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-          ) : null}
-        </DialogTitle>
-      );
+        const { children, onClose, ...other } = props;
+
+        return (
+            <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+                {children}
+                {onClose ? (
+                    <IconButton
+                        aria-label="close"
+                        onClick={onClose}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                ) : null}
+            </DialogTitle>
+        );
     };
-    
+
     BootstrapDialogTitle.propTypes = {
-      children: PropTypes.node,
-      onClose: PropTypes.func.isRequired,
+        children: PropTypes.node,
+        onClose: PropTypes.func.isRequired,
     };
-    
-    function createData(jobNumber,    customerCode,    jobState,    jobType,    jobAddition,    createTime,    operation) {
-        return { jobNumber,    customerCode,    jobState,    jobType,    jobAddition,    createTime,    operation };
+
+    function createData(jobNumber, customerCode, jobState, jobType, jobAddition, createTime, operation) {
+        return { jobNumber, customerCode, jobState, jobType, jobAddition, createTime, operation };
     }
 
-    function turnState(flag){
-      if(flag){
-        return <Button variant="outlined" color="primary">新增</Button>
-      }else{
-        return <Button variant="outlined">完成</Button>
-      }
+    function turnState(flag) {
+        if (flag) {
+            return <Button variant="outlined" color="primary">新增</Button>
+        } else {
+            return <Button variant="outlined">完成</Button>
+        }
     }
 
     // 周转类型的判断
-    function operationState(flag){
-      if(flag){
-        return (
-          <div>
-            <Button variant="outlined" color="secondary">取消</Button>&emsp;
-            <Button variant="outlined" color="primary">新增</Button>&emsp;
-            <Button variant="outlined">完成</Button>
-          </div>
-          )
-      }else{
-        return ''
-      }
+    function operationState(flag) {
+        if (flag) {
+            return (
+                <div>
+                    <Button variant="outlined" color="secondary">取消</Button>&emsp;
+                    <Button variant="outlined" color="primary">新增</Button>&emsp;
+                    <Button variant="outlined">完成</Button>
+                </div>
+            )
+        } else {
+            return ''
+        }
     }
-    
+
     const onSubmit = () => {
     }
-      
-      const rows = [
+
+    const rows = [
         createData('RT2021060100001', 'CU_JS00001', true, '逆向', '一般', '2021-06-01 09:29:31', true),
         createData('RT2021051700001', 'CU_JS00001', true, '逆向', '较好', '2021-06-01 09:29:31', false),
         createData('RT2021052900004', 'CU_JS00001', true, '逆向', '优秀', '2021-06-01 09:29:31', false),
         createData('RT2021052900003', 'CU_JS00001', false, '逆向', '较差', '2021-06-01 09:29:31', false),
-      ];
-    
-      const useStyles = makeStyles((theme) => ({
+    ];
+
+    const useStyles = makeStyles((theme) => ({
         margin: {
-          margin: theme.spacing(1),
+            margin: theme.spacing(1),
         },
         extendedIcon: {
-          marginRight: theme.spacing(1),
+            marginRight: theme.spacing(1),
         },
-      }));
-    
+    }));
+
 
     // 选项卡
     // const [value, setValue] = React.useState(0);
@@ -132,39 +132,41 @@ import Pagination from '@mui/material/Pagination';
         jobAddition: '',
         createTime: '',
         operation: false,
-  });
+    });
 
 
 
     const handleChange = (event, newValue) => {
-      setValue(newValue);
+        setValue(newValue);
     };
     // 按钮组件
     const classes = useStyles();
     // 弹窗
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
-      setOpen(true);
+        setOpen(true);
     };
     const handleClose = () => {
-      setOpen(false);
+        setOpen(false);
     };
-    
+
     //换页
     const [page, setPage] = React.useState(1);
-    const pageNumberOnChange=(event,value)=>{
-      console.log(value)
-      setPage(value)
+    const pageNumberOnChange = (event, value) => {
+        console.log(value)
+        setPage(value)
     }
 
     return (
-      <div style={{width: `calc(100% - ${windowsData.drawerWidth}px)`,
-        height: 'calc(100% - 64px)',
-        marginLeft: ` ${windowsData.drawerWidth}px`,
-        marginTop: '64px'}}>
-        <br></br>
-        <div component={Paper}>
-          <Paper square>
+        <div style={{
+            width: `calc(100% - ${windowsData.drawerWidth}px)`,
+            height: 'calc(100% - 64px)',
+            marginLeft: ` ${windowsData.drawerWidth}px`,
+            marginTop: '64px'
+        }}>
+            <br></br>
+            <div component={Paper}>
+                <Paper square>
                     <Tabs
                         value={value}
                         indicatorColor="primary"
@@ -383,3 +385,6 @@ import Pagination from '@mui/material/Pagination';
         </div>
     );
 }
+
+export default gongdan;
+

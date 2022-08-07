@@ -17,7 +17,7 @@ const start = async () => {
             useUnifiedTopology: true,
             useCreateIndex: true
         });
-        console.log('Connected to MongoDb!'+process.env.MONGO_URI);
+        console.log('Connected to MongoDb !!'+process.env.MONGO_URI);
     } catch (err){
         console.error(err);
     }
@@ -25,7 +25,7 @@ const start = async () => {
     const port = process.env.PORT || 5000;
 
     app.listen(port, ()=>{
-        console.log(`Listening on port ${port}!`);
+        console.log(`management backend listening on port ${port}!`);
     });
 };
 

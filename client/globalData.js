@@ -1,2 +1,5 @@
-var drawerWidth = 240;
-export default drawerWidth;
+global.windowsData={
+    drawerWidth:240,
+    pathDataShow: ''
+}
+export default windowsData;

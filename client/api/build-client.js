@@ -4,7 +4,7 @@ const buildClient = ({ req }) => {
     if(typeof window === 'undefined'){
         // we are on the server
         return axios.create({
-            baseURL: 'http://syswift.me/',
+            baseURL: 'http://www.syswift.me/',
             headers: req.headers
         });
     }else{

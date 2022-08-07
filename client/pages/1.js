@@ -28,12 +28,15 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@mui/material/Typography';
+import * as ReactDOM from 'react-dom';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import drawerWidth from '../globalData'
+import axios from 'axios';
 
 import Pagination from '@mui/material/Pagination';
-
+import { format } from "date-fns";
+import { TextField } from '@mui/material';
 
 // 弹窗
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -79,18 +82,24 @@ function createData(turnoverNumber, customerCode, terminalCode, turnoverState, t
   }
 function turnState(flag){
   if(flag){
-    return <Button variant="outlined" color="primary">新增</Button>
+    return <Button variant="outlined" color="primary">进行中</Button>
   }else{
     return <Button variant="outlined">完成</Button>
   }
 }
+
+const ondelete = async () =>{
+  console.log('here');
+  const res = await axios.get('/api/management/transdelete/'+'RT2022080700001');
+  alert(JSON.stringify(res.data));
+}
+
 // 周转类型的判断
 function operationState(flag){
   if(flag){
     return (
       <div>
-        <Button variant="outlined" color="secondary">取消</Button>&emsp;
-        <Button variant="outlined" color="primary">新增</Button>&emsp;
+        <Button variant="outlined" color="secondary" onClick={ondelete}>取消</Button>&emsp;
         <Button variant="outlined">完成周转</Button>
       </div>
       )
@@ -98,16 +107,7 @@ function operationState(flag){
     return ''
   }
 }
-  
-  const rows = [
-    createData('RT2021060100001', 'CU_JS00001', 'EU_SD_00002',true,'逆向周转','陈超','2021-06-01 09:29:31',true),
-    createData('RT2021051700001', 'CU_JS00001', 'EU_SD_00002',true,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900004', 'CU_JS00001', 'EU_JL_00001',true,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900003', 'CU_JS00001', 'EU_SC_00002',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900002', 'CU_JS00001', 'EU_SD_00002',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052900001', 'CU_JS00001', 'EU_SD_00002',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-    createData('RT2021052800004', 'CU_JS00001', 'EU_JL_00001',false,'逆向周转','陈超','2021-06-01 09:29:31',false),
-  ];
+
 
   const useStyles = makeStyles((theme) => ({
     margin: {
@@ -118,12 +118,16 @@ function operationState(flag){
     },
   }));
 
-  export default function BasicTable() {
+  const trans = () => {
     // 选项卡
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
+    const [value, setValue] = React.useState({
+      transId:'',
+      customerSelect: '',
+      terminalSelect: '',
+      turnoverTypeSelect: '',
+      turnoverCodeSelect: []
+    });
+
     // 按钮组件
     const classes = useStyles();
     // 弹窗
@@ -141,6 +145,200 @@ function operationState(flag){
       console.log(value)
       setPage(value)
     }
+
+    const handleChange = (prop) => (event) => {
+      setValue({ ...value, [prop]: event.target.value });
+    };
+
+    const getDate = () =>{
+      const today = new Date();
+
+      //const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() +' '+ today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      let date = '';
+      date = format(today, "MMMM do, yyyy H:mma");
+
+      return date;
+    }
+
+    const search = async () => {
+      const processPer = await axios.get('/api/auth/currentuser');
+      if(processPer.data.currentUser === null)
+      {
+              alert('请登录账号');
+      }
+      else{
+
+        const transId = document.getElementById('StransId').value;
+        const customerId = document.getElementById('ScustomerSelect').innerText;
+        const termId = document.getElementById('SterminalSelect').innerText;
+        const transStateString = document.getElementById('SturnoverStateSelect').innerText;
+        const transType = document.getElementById('SturnoverTypeSelect').innerText;
+
+        //console.log(transStateString);
+
+        const transState = (transStateString === '进行中' ? true : transStateString === '完成' ? false : null);
+    
+        const all = await axios.post('/api/management/transdownload',{
+          processPer: processPer.data.currentUser.email
+        });
+    
+        console.log(processPer.data.currentUser.email);
+        console.log(customerId);
+        const alltrans = [];
+    
+        for(const tran of all.data.allTrans)
+        {
+          if(
+            (transId === '' || transId === tran.transId) &&
+            (customerId || customerId === tran.customerId) &&
+            (termId || termId === tran.termId) &&
+            (transState === null || transState === tran.transState) &&
+            (transType || transType === tran.transType)
+            )
+          {
+            alltrans.push(createData(tran.transId,tran.customerId,tran.termId,tran.transState,tran.transType,tran.processPer,tran.createTime,true));
+          }
+        }
+    
+        const element = document.getElementById('all_trans');
+    
+        ReactDOM.render(alltrans.map((row) => (
+          <TableRow
+            key={row.name}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <TableCell component="th" scope="row">
+            {<Button id={row.turnoverNumber} variant="outlined">{row.turnoverNumber}</Button>}
+            </TableCell>
+            <TableCell align="center">{row.customerCode}</TableCell>
+            <TableCell align="center">{row.terminalCode}</TableCell>
+            <TableCell align="center">{turnState(row.turnoverState)}</TableCell>
+            <TableCell align="center">{row.turnoverType}</TableCell>
+            <TableCell align="center">{row.founders}</TableCell>
+            <TableCell align="center">{row.createTime}</TableCell>
+            <TableCell align="center">{operationState(row.operation)}</TableCell>
+          </TableRow>
+        )), element);
+      }
+    }
+  
+  const onSubmit = async (event) => {
+  
+          event.preventDefault();
+  
+          const transId = value.transId;
+          const customerSelect = value.customerSelect;
+          const terminalSelect = value.terminalSelect;
+          const turnoverTypeSelect = value.turnoverTypeSelect;
+          const turnoverCodeSelect = value.turnoverCodeSelect;
+          const processObj = await axios.get('/api/auth/currentuser');
+
+          if(processObj.data.currentUser === null)
+          {
+            alert('请登录账号');
+
+            setValue({...value,
+              transId:'',
+              customerSelect:'',
+              terminalSelect:'',
+              turnoverTypeSelect:'',
+              turnoverCodeSelect: []
+          });
+          }
+          else if(transId === '' ||
+            customerSelect === '' ||
+            terminalSelect === '' ||
+            turnoverTypeSelect === '' ||
+            turnoverCodeSelect === [])
+          {
+            alert('请填写所有周转单信息');
+
+            setValue({...value,
+              transId:'',
+              customerSelect:'',
+              terminalSelect:'',
+              turnoverTypeSelect:'',
+              turnoverCodeSelect: []
+          });
+          }
+          else{
+  
+            try{
+                const processPer = processObj.data.currentUser.email;
+                const currentDate = getDate();
+
+                //alert(currentDate);
+
+                await axios.post('/api/management/transupload', {
+                  transId: transId,
+                  customerId: customerSelect,
+                  termId: terminalSelect,
+                  transState: true,
+                  transType: turnoverTypeSelect,
+                  processPer: processPer,
+                  createTime: currentDate
+                })
+
+                setValue({...value,
+                  transId:'',
+                  customerSelect:'',
+                  terminalSelect:'',
+                  turnoverTypeSelect:'',
+                  processPer:''
+              });
+      
+                search();
+                setOpen(false);
+                //success upload
+            } 
+            catch (err) {
+                value.errors = err.response.data.errors;
+                alert(JSON.stringify(value.errors));
+            }
+          }
+  }
+  
+
+  let boxNo = 0;
+
+  const newBox =()=>{
+
+    const element = document.getElementById('transboxes');
+
+    let tmp = [];
+    boxNo ++;
+    console.log(boxNo);
+    for (let i = 0; i < boxNo; i++) {
+      tmp.push(i);
+    }
+
+    ReactDOM.render(tmp.map((res)=>
+    <TableRow id={res}>                                                        
+    <TableCell>
+    <Select labelId="turnoverCodeLabel" id={'turnoverCodeSelect'+res} onChange={handleBoxChange('code',res)} style={{width: '100%' }} >
+      <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
+      <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
+      <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
+      <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
+      <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
+      <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
+      <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
+      <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
+      <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
+      <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
+      </Select>
+    </TableCell>  
+    <TableCell>
+      <TextField margin="normal" inputProps={{ inputMode: 'numeric', pattern: '[1-9]*' }} onChange={handleBoxChange('amount',res)} style={{width: '50%' }}/>
+    </TableCell>
+    <TableCell>
+    <IconButton aria-label="delete">
+      <DeleteIcon />
+    </IconButton>
+    </TableCell>
+    </TableRow>
+    )
+    ,element);
+  }
 
     return (
       <div style={{width: `calc(100% - ${drawerWidth}px)`,
@@ -164,13 +362,13 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;周转单号:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Input placeholder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{width: '10%' }}/>
+                <Input placeholder="请输入周转单号" id="StransId"  inputProps={{ 'aria-label': 'description' }} style={{width: '10%' }}/>
               </span>
               <span>
                 &emsp;&emsp;&emsp;&emsp;客户代码:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="customerLabel" id="customerSelect" style={{width: '10%' }}>
+                <Select labelId="customerLabel" id="ScustomerSelect" style={{width: '10%' }}>
                   <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
                   <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
                   <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
@@ -183,7 +381,7 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;终端代码:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="terminalLabel" id="terminalSelect" style={{width: '10%' }} >
+                <Select labelId="terminalLabel" id="SterminalSelect" style={{width: '10%' }} >
                   <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
                   <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
                   <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
@@ -200,9 +398,9 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;周转单状态:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="turnoverStateLabel" id="turnoverStateSelect" style={{width: '10%' }}>
+                <Select labelId="turnoverStateLabel" id="SturnoverStateSelect" style={{width: '10%' }}>
                   <MenuItem value="完成">完成</MenuItem>
-                  <MenuItem value="新增">新增</MenuItem>
+                  <MenuItem value="新增">进行中</MenuItem>
                 </Select>
               </span>
             </div>
@@ -212,7 +410,7 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;周转单类型:&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{width: '10%' }}>
+                <Select labelId="turnoverTypeLabel" id="SturnoverTypeSelect" style={{width: '10%' }}>
                   <MenuItem value="正向周转">正向周转</MenuItem>
                   <MenuItem value="逆向周转">逆向周转</MenuItem>
                 </Select>
@@ -222,7 +420,7 @@ function operationState(flag){
               
               <center>
                 <br></br>
-                {/* <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}> */}
+                
                   <span>
                     <Button variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
                       + 新增周转单
@@ -234,6 +432,7 @@ function operationState(flag){
                       <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
                         新增周转单
                       </BootstrapDialogTitle>
+                      <form id="sinsertForm" autoComplete="on" onSubmit={onSubmit}>
                       <DialogContent dividers>
                         <Typography gutterBottom>
                           <span>*周转单号:</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
@@ -242,11 +441,11 @@ function operationState(flag){
                         </Typography>
                         <Typography gutterBottom>
                           <span>
-                            <Input placeho lder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{width: '30%' }}/>  
+                            <Input placeho lder="请输入周转单号" onChange={handleChange('transId')}  inputProps={{ 'aria-label': 'description' }} style={{width: '30%' }}/>  
                           </span>
                           &emsp;
                           <span>
-                            <Select labelId="customerLabel" id="customerSelect" style={{width: '30%' }}>
+                            <Select labelId="customerLabel" id="customerSelect" onChange={handleChange('customerSelect')} style={{width: '30%' }}>
                               <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
                               <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
                               <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
@@ -257,7 +456,7 @@ function operationState(flag){
                           </span>
                           &emsp;
                           <span>
-                            <Select labelId="terminalLabel" id="terminalSelect" style={{width: '30%' }} >
+                            <Select labelId="terminalLabel" id="terminalSelect" onChange={handleChange('terminalSelect')} style={{width: '30%' }} >
                               <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
                               <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
                               <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
@@ -276,7 +475,7 @@ function operationState(flag){
                         </Typography>
                         <Typography gutterBottom>
                         <span>
-                          <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{width: '30%' }}>
+                          <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" onChange={handleChange('turnoverTypeSelect')} style={{width: '30%' }}>
                             <MenuItem value="正向周转">正向周转</MenuItem>
                             <MenuItem value="逆向周转">逆向周转</MenuItem>
                           </Select>
@@ -288,7 +487,9 @@ function operationState(flag){
                           <br></br>
                           <div>
                             订单明细
+                            <Button variant="contained" onClick={newBox}>新增一行</Button>
                           </div>
+                          
                           <br></br>
                           <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 400 }} aria-label="simple table">
@@ -299,51 +500,32 @@ function operationState(flag){
                                   <TableCell>操作</TableCell>
                                 </TableRow>
                               </TableHead>
-                              <TableBody>
-                                <TableRow>
-                                  <TableCell>
-                                    <Select labelId="turnoverCodeLabel" id="turnoverCodeSelect" style={{width: '100%' }} >
-                                      <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
-                                      <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
-                                      <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
-                                      <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
-                                      <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
-                                      <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
-                                      <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
-                                      <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
-                                      <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
-                                      <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
-                                    </Select>
-                                  </TableCell>
-                                  <TableCell>
-                                  
-                                  </TableCell>
-                                  <TableCell>
-                                  <IconButton aria-label="delete">
-                                    <DeleteIcon />
-                                  </IconButton>
-                                  </TableCell>
-                                </TableRow>
+                              <TableBody id="transboxes">
+                                
                               </TableBody>
                             </Table>
                           </TableContainer>
                         </Typography>
+                          
+                        <DialogActions>
+                          <Button autoFocus variant="contained" type="submit" size="medium" color="primary" className={classes.margin}>
+                            提交
+                          </Button>
+                        </DialogActions>
+
                       </DialogContent>
-                      <DialogActions>
-                        <Button autoFocus variant="contained" onClick={handleClickOpen} size="medium" color="primary" className={classes.margin}>
-                          提交
-                        </Button>
-                      </DialogActions>
+                      </form>
                     </BootstrapDialog>
                   </span>
-                {/* </form> */}
+                
                 &emsp;&emsp;
 
                 <span>
-                <Button variant="outlined" color="primary">
+                <Button variant="outlined" onClick={search} color="primary">
                   查询
                 </Button>
                 </span>
+                
                 <br></br>
                 <br></br>
               </center>
@@ -366,27 +548,13 @@ function operationState(flag){
                 <TableCell align="center">操作</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row">
-                    {row.turnoverNumber}
-                  </TableCell>
-                  <TableCell align="center">{row.customerCode}</TableCell>
-                  <TableCell align="center">{row.terminalCode}</TableCell>
-                  <TableCell align="center">{turnState(row.turnoverState)}</TableCell>
-                  <TableCell align="center">{row.turnoverType}</TableCell>
-                  <TableCell align="center">{row.founders}</TableCell>
-                  <TableCell align="center">{row.createTime}</TableCell>
-                  <TableCell align="center">{operationState(row.operation)}</TableCell>
-                </TableRow>
-              ))}
+            <TableBody id='all_trans'>
             </TableBody>
             <Pagination count={10}  showFirstButton showLastButton onChange={pageNumberOnChange} />
           </Table>
         </TableContainer>
       </div>
     );
-  }
+}
+
+  export default trans;
