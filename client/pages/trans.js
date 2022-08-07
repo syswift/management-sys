@@ -36,8 +36,7 @@ import axios from 'axios';
 
 import Pagination from '@mui/material/Pagination';
 import { format } from "date-fns";
-
-
+import { TextField } from '@mui/material';
 
 // 弹窗
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -119,7 +118,6 @@ function operationState(flag){
     },
   }));
 
-
   const trans = () => {
     // 选项卡
     const [value, setValue] = React.useState({
@@ -127,8 +125,7 @@ function operationState(flag){
       customerSelect: '',
       terminalSelect: '',
       turnoverTypeSelect: '',
-      turnoverCodeSelect: '',
-      alltrans: []
+      turnoverCodeSelect: []
     });
 
     // 按钮组件
@@ -162,6 +159,67 @@ function operationState(flag){
 
       return date;
     }
+
+    const search = async () => {
+      const processPer = await axios.get('/api/auth/currentuser');
+      if(processPer.data.currentUser === null)
+      {
+              alert('请登录账号');
+      }
+      else{
+
+        const transId = document.getElementById('StransId').value;
+        const customerId = document.getElementById('ScustomerSelect').innerText;
+        const termId = document.getElementById('SterminalSelect').innerText;
+        const transStateString = document.getElementById('SturnoverStateSelect').innerText;
+        const transType = document.getElementById('SturnoverTypeSelect').innerText;
+
+        //console.log(transStateString);
+
+        const transState = (transStateString === '进行中' ? true : transStateString === '完成' ? false : null);
+    
+        const all = await axios.post('/api/management/transdownload',{
+          processPer: processPer.data.currentUser.email
+        });
+    
+        console.log(processPer.data.currentUser.email);
+        console.log(customerId);
+        const alltrans = [];
+    
+        for(const tran of all.data.allTrans)
+        {
+          if(
+            (transId === '' || transId === tran.transId) &&
+            (customerId || customerId === tran.customerId) &&
+            (termId || termId === tran.termId) &&
+            (transState === null || transState === tran.transState) &&
+            (transType || transType === tran.transType)
+            )
+          {
+            alltrans.push(createData(tran.transId,tran.customerId,tran.termId,tran.transState,tran.transType,tran.processPer,tran.createTime,true));
+          }
+        }
+    
+        const element = document.getElementById('all_trans');
+    
+        ReactDOM.render(alltrans.map((row) => (
+          <TableRow
+            key={row.name}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <TableCell component="th" scope="row">
+            {<Button id={row.turnoverNumber} variant="outlined">{row.turnoverNumber}</Button>}
+            </TableCell>
+            <TableCell align="center">{row.customerCode}</TableCell>
+            <TableCell align="center">{row.terminalCode}</TableCell>
+            <TableCell align="center">{turnState(row.turnoverState)}</TableCell>
+            <TableCell align="center">{row.turnoverType}</TableCell>
+            <TableCell align="center">{row.founders}</TableCell>
+            <TableCell align="center">{row.createTime}</TableCell>
+            <TableCell align="center">{operationState(row.operation)}</TableCell>
+          </TableRow>
+        )), element);
+      }
+    }
   
   const onSubmit = async (event) => {
   
@@ -171,6 +229,7 @@ function operationState(flag){
           const customerSelect = value.customerSelect;
           const terminalSelect = value.terminalSelect;
           const turnoverTypeSelect = value.turnoverTypeSelect;
+          const turnoverCodeSelect = value.turnoverCodeSelect;
           const processObj = await axios.get('/api/auth/currentuser');
 
           if(processObj.data.currentUser === null)
@@ -182,13 +241,14 @@ function operationState(flag){
               customerSelect:'',
               terminalSelect:'',
               turnoverTypeSelect:'',
-              processPer:''
+              turnoverCodeSelect: []
           });
           }
           else if(transId === '' ||
             customerSelect === '' ||
             terminalSelect === '' ||
-            turnoverTypeSelect === '')
+            turnoverTypeSelect === '' ||
+            turnoverCodeSelect === [])
           {
             alert('请填写所有周转单信息');
 
@@ -197,7 +257,7 @@ function operationState(flag){
               customerSelect:'',
               terminalSelect:'',
               turnoverTypeSelect:'',
-              processPer:''
+              turnoverCodeSelect: []
           });
           }
           else{
@@ -238,52 +298,46 @@ function operationState(flag){
   }
   
 
-  const search = async () => {
-    const processPer = await axios.get('/api/auth/currentuser');
-    if(processPer.data.currentUser === null)
-    {
-            alert('请登录账号');
+  let boxNo = 0;
 
-            setValue({...value,
-              transId:'',
-              customerSelect:'',
-              terminalSelect:'',
-              turnoverTypeSelect:'',
-              processPer:''
-          })
+  const newBox =()=>{
+
+    const element = document.getElementById('transboxes');
+
+    let tmp = [];
+    boxNo ++;
+    console.log(boxNo);
+    for (let i = 0; i < boxNo; i++) {
+      tmp.push(i);
     }
-    else{
 
-      const all = await axios.get('/api/management/transdownload/'+processPer.data.currentUser.email);
-
-      console.log(processPer.data.currentUser.email);
-      value.alltrans = [];
-
-      for(const tran of all.data.allTrans)
-      {
-        value.alltrans.push(createData(tran.transId,tran.customerId,tran.termId,tran.transState,tran.transType,tran.processPer,tran.createTime,true));
-      }
-
-      const element = document.getElementById('all_trans');
-
-      ReactDOM.render(value.alltrans.map((row) => (
-        <TableRow
-          key={row.name}
-          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-          <TableCell component="th" scope="row">
-            {row.turnoverNumber}
-          </TableCell>
-          <TableCell align="center">{row.customerCode}</TableCell>
-          <TableCell align="center">{row.terminalCode}</TableCell>
-          <TableCell align="center">{turnState(row.turnoverState)}</TableCell>
-          <TableCell align="center">{row.turnoverType}</TableCell>
-          <TableCell align="center">{row.founders}</TableCell>
-          <TableCell align="center">{row.createTime}</TableCell>
-          <TableCell align="center">{operationState(row.operation)}</TableCell>
-        </TableRow>
-      )), element);
-    }
-    
+    ReactDOM.render(tmp.map((res)=>
+    <TableRow id={res}>                                                        
+    <TableCell>
+    <Select labelId="turnoverCodeLabel" id={'turnoverCodeSelect'+res} onChange={handleBoxChange('code',res)} style={{width: '100%' }} >
+      <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
+      <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
+      <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
+      <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
+      <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
+      <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
+      <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
+      <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
+      <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
+      <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
+      </Select>
+    </TableCell>  
+    <TableCell>
+      <TextField margin="normal" inputProps={{ inputMode: 'numeric', pattern: '[1-9]*' }} onChange={handleBoxChange('amount',res)} style={{width: '50%' }}/>
+    </TableCell>
+    <TableCell>
+    <IconButton aria-label="delete">
+      <DeleteIcon />
+    </IconButton>
+    </TableCell>
+    </TableRow>
+    )
+    ,element);
   }
 
     return (
@@ -308,13 +362,13 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;周转单号:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Input placeholder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{width: '10%' }}/>
+                <Input placeholder="请输入周转单号" id="StransId"  inputProps={{ 'aria-label': 'description' }} style={{width: '10%' }}/>
               </span>
               <span>
                 &emsp;&emsp;&emsp;&emsp;客户代码:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="customerLabel" id="customerSelect" style={{width: '10%' }}>
+                <Select labelId="customerLabel" id="ScustomerSelect" style={{width: '10%' }}>
                   <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
                   <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
                   <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
@@ -327,7 +381,7 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;终端代码:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="terminalLabel" id="terminalSelect" style={{width: '10%' }} >
+                <Select labelId="terminalLabel" id="SterminalSelect" style={{width: '10%' }} >
                   <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
                   <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
                   <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
@@ -344,9 +398,9 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;周转单状态:&emsp;&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="turnoverStateLabel" id="turnoverStateSelect" style={{width: '10%' }}>
+                <Select labelId="turnoverStateLabel" id="SturnoverStateSelect" style={{width: '10%' }}>
                   <MenuItem value="完成">完成</MenuItem>
-                  <MenuItem value="新增">新增</MenuItem>
+                  <MenuItem value="新增">进行中</MenuItem>
                 </Select>
               </span>
             </div>
@@ -356,7 +410,7 @@ function operationState(flag){
                 &emsp;&emsp;&emsp;&emsp;周转单类型:&emsp;&emsp;&emsp;
               </span>
               <span>
-                <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{width: '10%' }}>
+                <Select labelId="turnoverTypeLabel" id="SturnoverTypeSelect" style={{width: '10%' }}>
                   <MenuItem value="正向周转">正向周转</MenuItem>
                   <MenuItem value="逆向周转">逆向周转</MenuItem>
                 </Select>
@@ -433,7 +487,9 @@ function operationState(flag){
                           <br></br>
                           <div>
                             订单明细
+                            <Button variant="contained" onClick={newBox}>新增一行</Button>
                           </div>
+                          
                           <br></br>
                           <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 400 }} aria-label="simple table">
@@ -444,36 +500,13 @@ function operationState(flag){
                                   <TableCell>操作</TableCell>
                                 </TableRow>
                               </TableHead>
-                              <TableBody>
-                                <TableRow>
-                                  <TableCell>
-                                    <Select labelId="turnoverCodeLabel" id="turnoverCodeSelect" onChange={handleChange('turnoverCodeSelect')} style={{width: '100%' }} >
-                                      <MenuItem value="EU_HB_00001">EU_HB_00001</MenuItem>
-                                      <MenuItem value="EU_AH_00001">EU_AH_00001</MenuItem>
-                                      <MenuItem value="EU_AH_00002">EU_AH_00002</MenuItem>
-                                      <MenuItem value="EU_NMG_00001">EU_NMG_00001</MenuItem>
-                                      <MenuItem value="EU_BJ_00001">EU_BJ_00001</MenuItem>
-                                      <MenuItem value="EU_SC_00001">EU_SC_00001</MenuItem>
-                                      <MenuItem value="EU_SH_00001">EU_SH_00001</MenuItem>
-                                      <MenuItem value="EU_HN_00001">EU_HN_00001</MenuItem>
-                                      <MenuItem value="EU_AH_00003">EU_AH_00003</MenuItem>
-                                      <MenuItem value="EU_AH_00004">EU_AH_00004</MenuItem>
-                                    </Select>
-                                  </TableCell>
-                                  <TableCell>
-                                  
-                                  </TableCell>
-                                  <TableCell>
-                                  <IconButton aria-label="delete">
-                                    <DeleteIcon />
-                                  </IconButton>
-                                  </TableCell>
-                                </TableRow>
+                              <TableBody id="transboxes">
+                                
                               </TableBody>
                             </Table>
                           </TableContainer>
                         </Typography>
-
+                          
                         <DialogActions>
                           <Button autoFocus variant="contained" type="submit" size="medium" color="primary" className={classes.margin}>
                             提交

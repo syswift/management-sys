@@ -3,9 +3,17 @@ import { Trans } from '../model/trans';
 
 const router = express.Router();
 
-router.get('/api/management/transdownload/:processPer', async (req: Request, res: Response) =>{
-    //console.log(req.params.processPer);
-    res.send({allTrans: await Trans.find({processPer: req.params.processPer}) || null});
+router.post('/api/management/transdownload',[], async (req: Request, res: Response) =>{
+
+    const { processPer} = req.body;
+
+    //console.log(transId, customerId, termId,transState, transType, processPer);
+
+    const transGet = await Trans.find({
+        processPer: processPer
+    }); 
+
+    res.status(201).send({allTrans: transGet});
 });
 
 export {router as transdownloadRouter};
