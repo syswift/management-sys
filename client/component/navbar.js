@@ -28,7 +28,7 @@ import WorkIcon from '@material-ui/icons/Work';
 import ListIcon from '@material-ui/icons/List';
 import DesktopWindowsIcon from '@material-ui/icons/DesktopWindows';
 
-import drawerWidth from '../globalData'
+import windowsData from '../globalData'
 import { render } from 'react-dom';
 
 // const drawerWidth = 240;
@@ -45,8 +45,8 @@ const useStyles = makeStyles((theme) => ({
       }),
     },
     appBarShift: {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: windowsData.drawerWidth,
+      width: `calc(100% - ${windowsData.drawerWidth}px)`,
       transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -59,12 +59,12 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
     drawer: {
-      width: drawerWidth,
+      width: windowsData.drawerWidth,
       flexShrink: 0,
       whiteSpace: 'nowrap',
     },
     drawerOpen: {
-      width: drawerWidth,
+      width: windowsData.drawerWidth,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
       overflowX: 'hidden',
       width: theme.spacing(7) + 1,
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9) + 1,
+        width: theme.spacing(7) + 1,
       },
     },
     toolbar: {
@@ -101,13 +101,15 @@ const Navbar =({currentUser})=>{
     const [open, setOpen] = React.useState(true);
 
     const handleDrawerOpen = () => {
-        drawerWidth=240;
+        windowsData.drawerWidth=240;
         setOpen(true);
+        Router.push(windowsData.pathDataShow);
     };
 
     const handleDrawerClose = () => {
-        drawerWidth=theme.spacing(9) + 1;
+        windowsData.drawerWidth=theme.spacing(9) + 1;
         setOpen(false);
+        Router.push(windowsData.pathDataShow);
     };
 
 
@@ -135,6 +137,7 @@ const Navbar =({currentUser})=>{
         try
         {
             console.log(Router.pathname);
+            windowsData.pathDataShow=Router.pathname;
             return Router.pathname;
         }
         catch{
@@ -238,7 +241,7 @@ const Navbar =({currentUser})=>{
                         </ListItem>
                     </List>
                     <List>
-                    <ListItem button onClick={()=>{Router.push('/')}}>
+                    <ListItem button onClick={()=>{Router.push('/gongdan')}}>
                         <ListItemIcon><WorkIcon color="primary"/></ListItemIcon>
                         <ListItemText primary='工单管理' />
                         </ListItem>
