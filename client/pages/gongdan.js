@@ -176,44 +176,44 @@ const gongdan = () => {
                         <Tab label="工单管理" />
                     </Tabs>
                     <div>
-                        <br></br>
-                        <span className='boxStyle'>
-                            &emsp;&emsp;&emsp;&emsp;工单单号:&emsp;&emsp;&emsp;&emsp;
-                        </span>
-                        <span>
-                            <Input placeholder="请输入工单单号" inputProps={{ 'aria-label': 'description' }} style={{ width: '10%' }} />
-                        </span>
-                        <span>
-                            &emsp;&emsp;&emsp;&emsp;客户代码:&emsp;&emsp;&emsp;&emsp;
-                        </span>
-                        <span>
-                            <Select labelId="customerLabel" id="customerSelect" style={{ width: '10%' }}>
-                                <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
-                                <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
-                                <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
-                                <MenuItem value="CU_JS00004">CU_JS00004</MenuItem>
-                            </Select>
-                        </span>
-                        <span>
-                            &emsp;&emsp;&emsp;&emsp;工单状态:&emsp;&emsp;&emsp;&emsp;
-                        </span>
-                        <span>
-                            <Select labelId="turnoverStateLabel" id="turnoverStateSelect" style={{ width: '10%' }}>
-                                <MenuItem value="完成">完成</MenuItem>
-                                <MenuItem value="新增">新增</MenuItem>
-                            </Select>
-                        </span>
-                        <span>
-                            &emsp;&emsp;&emsp;&emsp;工单类型:&emsp;&emsp;&emsp;
-                        </span>
-                        <span>
-                            <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{ width: '10%' }}>
-                                <MenuItem value="正向周转">正向周转</MenuItem>
-                                <MenuItem value="逆向周转">逆向周转</MenuItem>
-                            </Select>
-                        </span>
+                        <table>
+                            <br></br>
+                            <tr>
+                                <td style={{ width: '10%', textAlign: 'right' }}>工单单号:</td>
+                                <td style={{ width: '2%' }}></td>
+                                <td style={{ width: '10%' }}>
+                                    <Input placeholder="请输入工单单号" inputProps={{ 'aria-label': 'description' }} />
+                                </td>
+                                <td style={{ width: '10%', textAlign: 'right' }}>客户代码:</td>
+                                <td style={{ width: '2%' }}></td>
+                                <td style={{ width: '10%' }}>
+                                    <Select labelId="customerLabel" id="customerSelect" style={{ width: '100%' }}>
+                                        <MenuItem value="CU_JS00001">CU_JS00001</MenuItem>
+                                        <MenuItem value="CU_JS00002">CU_JS00002</MenuItem>
+                                        <MenuItem value="CU_JS00003">CU_JS00003</MenuItem>
+                                        <MenuItem value="CU_JS00004">CU_JS00004</MenuItem>
+                                    </Select>
+                                </td>
+                                <td style={{ width: '10%', textAlign: 'right' }}>工单状态:</td>
+                                <td style={{ width: '2%' }}></td>
+                                <td style={{ width: '10%' }}>
+                                    <Select labelId="turnoverStateLabel" id="turnoverStateSelect" style={{ width: '100%' }}>
+                                        <MenuItem value="完成">完成</MenuItem>
+                                        <MenuItem value="新增">新增</MenuItem>
+                                    </Select>
+                                </td>
+                                <td style={{ width: '10%', textAlign: 'right' }}>工单类型:</td>
+                                <td style={{ width: '2%' }}></td>
+                                <td style={{ width: '10%' }}>
+                                    <Select labelId="turnoverTypeLabel" id="turnoverTypeSelect" style={{ width: '100%' }}>
+                                        <MenuItem value="正向周转">正向周转</MenuItem>
+                                        <MenuItem value="逆向周转">逆向周转</MenuItem>
+                                    </Select>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
                     </div>
-
                     <div>
                         <center>
                             <br></br>
@@ -237,7 +237,7 @@ const gongdan = () => {
                                             </Typography>
                                             <Typography gutterBottom>
                                                 <span>
-                                                    <Input placeho lder="请输入工单单号" inputProps={{ 'aria-label': 'description' }} style={{ width: '30%' }} />
+                                                    <Input placeho lder="请输入周转单号" inputProps={{ 'aria-label': 'description' }} style={{ width: '30%' }} />
                                                 </span>
                                                 &emsp;
                                                 <span>
@@ -387,3 +387,4 @@ const gongdan = () => {
 }
 
 export default gongdan;
+
