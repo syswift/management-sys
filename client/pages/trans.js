@@ -88,22 +88,36 @@ const trans = () => {
     }
   }
 
-const finish = async (event) => {
-
+const transFinish = async (transId) =>{
   const processPer = await axios.get('/api/auth/currentuser');
-  const transId = event.currentTarget.id;
 
   const res = await axios.post('/api/management/transfinish',{
-    processPer: processPer
+    transId: transId,
+    processPer: processPer.data.currentUser.email
+    
   });
 
   console.log(res);
+
+  search();
+
 }
 
-const ondelete = async () =>{
-  console.log('here');
-  const res = await axios.get('/api/management/transdelete/'+'RT2022080700001');
+const finish = (event) => {
+  
+  const transId = event.currentTarget.id.substring(6);
+  //console.log(transId);
+
+  transFinish(transId);
+
+}
+
+const ondelete = async (event) =>{
+  const transId = event.currentTarget.id.substring(6);
+  const res = await axios.get('/api/management/transdelete/'+transId);
   alert(JSON.stringify(res.data));
+
+  search();
 }
 
   // 周转类型的判断
@@ -111,8 +125,8 @@ const ondelete = async () =>{
     if (flag) {
       return (
         <div>
-          <Button variant="outlined" color="secondary" id = {transId+'cancel'} >取消</Button>&emsp;
-          <Button variant="outlined" id = {transId+'finish'} onClick={finish} >完成周转</Button>
+          <Button variant="outlined" color="secondary" id = {'cancel'+transId} onClick={ondelete} >取消</Button>&emsp;
+          <Button variant="outlined" id = {'finish'+transId} onClick={finish} >完成周转</Button>
         </div>
       )
     } else {
@@ -240,7 +254,7 @@ const ondelete = async () =>{
             <TableCell align="center">{row.turnoverType}</TableCell>
             <TableCell align="center">{row.founders}</TableCell>
             <TableCell align="center">{row.createTime}</TableCell>
-            <TableCell align="center">{operationState(row.operation, row.customerCode)}</TableCell>
+            <TableCell align="center">{operationState(row.operation, row.turnoverNumber)}</TableCell>
           </TableRow>
         )), element);
       }
@@ -291,8 +305,7 @@ const ondelete = async () =>{
                 const processPer = processObj.data.currentUser.email;
                 const currentDate = getDate();
 
-                //alert(currentDate);
-                
+                //alert(processPer);
 
                 await axios.post('/api/management/transupload', {
                   transId: transId,

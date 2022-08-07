@@ -30,7 +30,8 @@ interface TransDoc extends mongoose.Document {
 const transSchema = new mongoose.Schema({
     transId: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     customerId: {
         type: String,

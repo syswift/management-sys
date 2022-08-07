@@ -30,7 +30,7 @@ router.post('/api/auth/signup',[
 validateRequest,
 async (req: Request, res: Response) =>{
 
-    const { email, password, con_password } = req.body;
+    const { email, password, con_password, userName } = req.body;
 
     if(password !== con_password){
         throw new BadRequestError('please input same password as above');
@@ -42,7 +42,7 @@ async (req: Request, res: Response) =>{
         throw new BadRequestError('Email in use');
     }
 
-    const user = User.build({email, password});
+    const user = User.build({email, password, userName});
     await user.save();
 
     //Generate JWT

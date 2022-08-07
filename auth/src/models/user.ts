@@ -4,6 +4,7 @@ import { Password } from '../service/password';
 interface UserAttrs {
     email: string;
     password: string;
+    userName: string;
 }
 
 //extends method for mongoose to work with typescript
@@ -16,6 +17,7 @@ interface UserDoc extends mongoose.Document {
     _id: string;
     email: string;
     password: string;
+    userName: string;
     admin: string;
     hasAccess: string;
 }
@@ -26,6 +28,10 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     password: {
+        type: String,
+        required: true
+    },
+    userName: {
         type: String,
         required: true
     }

@@ -5,15 +5,13 @@ const router = express.Router();
 
 router.post('/api/management/transfinish',[], async (req: Request, res: Response) =>{
 
-    const { processPer} = req.body;
+    const {transId, processPer} = req.body;
 
-    //console.log(transId, customerId, termId,transState, transType, processPer);
+    console.log(transId+' '+ processPer);
 
-    const transGet = await Trans.find({
-        processPer: processPer
-    }); 
+    const tran = Trans.findOneAndUpdate({transId: transId, processPer: processPer },{ transState: false }).exec();
 
-    res.status(201).send({allTrans: transGet});
+    res.status(201).send(JSON.stringify(tran));
 });
 
 export {router as transfinishRouter};

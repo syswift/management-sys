@@ -52,6 +52,7 @@ const signup = () => {
         const email = values.email;
         const password = values.password;
         const con_password = values.confirmPassword;
+        const userName = values.userName;
 
         setValues({...values,
             is_con_pass_err: false, 
@@ -64,7 +65,7 @@ const signup = () => {
 
         try{
             const response = await axios.post('/api/auth/signup', {
-                email, password, con_password
+                email, password, con_password , userName
             })
             console.log(response);
             //success sign up
@@ -124,6 +125,16 @@ const signup = () => {
                 label="Email"
                 placeholder="Input a valid email address"
                 onChange={handleChange('email')}/>
+            </div>
+
+            <div className="comp">
+            <TextField 
+                fullWidth
+                id="userName" 
+                variant="outlined"  
+                label="user name"
+                placeholder="user name"
+                onChange={handleChange('userName')}/>
             </div>
 
             <div className="comp">
