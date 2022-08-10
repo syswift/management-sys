@@ -8,6 +8,7 @@ import { signinRouter } from './routes/signin';
 import { signoutRouter } from './routes/signout';
 import { signupRouter } from './routes/signup';
 import { errorHandler, NotFoundError } from '@syswift1/common';
+import { usernameRouter } from './routes/get-username';
 
 const app = express();
 app.set('trust proxy', true);
@@ -19,6 +20,7 @@ app.use(
     })
 );
 //routes
+app.use(usernameRouter);
 app.use(currentUserRouter);
 app.use(signinRouter);
 app.use(signoutRouter);

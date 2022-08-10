@@ -231,8 +231,11 @@ const ondelete = async (event) =>{
             (transType.length < 2 || transType === tran.transType)
             )
           {
+            const res = await axios.post('/api/auth/username',{
+              email: processPer.data.currentUser.email
+            });
             //alert(customerId +' '+ termId + ' '+transState);
-            alltrans.push(createData(tran.transId,tran.customerId,tran.termId,tran.transState,tran.transType,tran.processPer,tran.createTime,true));
+            alltrans.push(createData(tran.transId,tran.customerId,tran.termId,tran.transState,tran.transType,res.data.username.userName,tran.createTime,true));
           }
           else{
             console.log('没找到对应周转单');
